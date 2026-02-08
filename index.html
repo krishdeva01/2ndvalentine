@@ -162,7 +162,8 @@
             align-items: center;
             margin-top: 40px;
             position: relative;
-            min-height: 80px;
+            min-height: 200px;
+            overflow: visible;
         }
 
         button {
@@ -182,7 +183,7 @@
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
             position: relative;
-            z-index: 2;
+            z-index: 3;
         }
 
         #yesBtn:hover {
@@ -196,47 +197,20 @@
             position: absolute;
             padding: 8px 20px;
             font-size: 0.85em;
-            z-index: 1;
+            z-index: 5;
             right: 20px;
+            width: 70px;
+            height: 40px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #noBtn:hover {
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
         }
 
-        .audio-control {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .audio-control:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .audio-control.playing {
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.05);
-            }
-        }
 
         .success-message {
             font-size: 2em;
@@ -287,9 +261,6 @@
         <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-melody-547.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Audio Control Button -->
-    <button class="audio-control" id="audioControl" title="Click to play music">🔇</button>
-
     <div class="container">
         <!-- Proposal Content -->
         <div class="proposal-content" id="proposalContent">
@@ -339,44 +310,17 @@
         // Create hearts periodically
         setInterval(createHeart, 300);
 
-        // Background Music Control
+        // Background Music Auto-play
         const bgMusic = document.getElementById('bgMusic');
-        const audioControl = document.getElementById('audioControl');
-        let isPlaying = false;
         let hasStarted = false;
 
-        // Set initial state
-        audioControl.textContent = '🔇';
-        bgMusic.volume = 0.5; // Set volume to 50%
+        // Set volume to 50%
+        bgMusic.volume = 0.5;
 
         // Play music on ANY click on the page (first time only)
         document.addEventListener('click', function startMusic() {
             if (!hasStarted) {
                 bgMusic.play().then(() => {
-                    audioControl.textContent = '🎵';
-                    audioControl.classList.add('playing');
-                    isPlaying = true;
-                    hasStarted = true;
-                }).catch(error => {
-                    console.log('Audio play failed:', error);
-                });
-            }
-        });
-
-        // Toggle music on button click
-        audioControl.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent triggering the startMusic listener
-
-            if (isPlaying) {
-                bgMusic.pause();
-                audioControl.textContent = '🔇';
-                audioControl.classList.remove('playing');
-                isPlaying = false;
-            } else {
-                bgMusic.play().then(() => {
-                    audioControl.textContent = '🎵';
-                    audioControl.classList.add('playing');
-                    isPlaying = true;
                     hasStarted = true;
                 }).catch(error => {
                     console.log('Audio play failed:', error);
@@ -403,25 +347,26 @@
 
         // No button - move away when clicked or hovered
         function moveNoButton() {
-            const container = document.querySelector('.container');
-            const containerRect = container.getBoundingClientRect();
-            const btnRect = noBtn.getBoundingClientRect();
+            const buttonsContainer = document.querySelector('.buttons');
+            const containerRect = buttonsContainer.getBoundingClientRect();
 
-            // Calculate available space
-            const maxX = containerRect.width - btnRect.width - 80; // 80 = padding
-            const maxY = 200; // vertical movement range
+            // Calculate safe area
+            const buttonWidth = 70;
+            const buttonHeight = 40;
 
-            // Generate random position
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY - 100;
+            // Generate random position with larger movement range
+            const randomX = Math.random() * (containerRect.width - buttonWidth - 40) + 20;
+            const randomY = (Math.random() * 200) - 100; // Much larger vertical range (-100 to +100)
 
-            // Use setAttribute to force styles
+            // Use setAttribute to force styles with fixed width
             noBtn.setAttribute('style', `
                 position: absolute !important;
                 left: ${randomX}px !important;
                 top: ${randomY}px !important;
                 padding: 8px 20px !important;
                 font-size: 0.85em !important;
+                width: 70px !important;
+                height: 40px !important;
                 transition: all 0.3s ease !important;
                 background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
                 color: white !important;
@@ -432,7 +377,11 @@
                 text-transform: uppercase !important;
                 letter-spacing: 1px !important;
                 font-weight: 600 !important;
-                z-index: 1 !important;
+                z-index: 5 !important;
+                white-space: nowrap !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             `);
         }
 
