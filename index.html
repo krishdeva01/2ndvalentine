@@ -82,6 +82,11 @@
             display: none;
         }
 
+        .wait-content {
+            display: none;
+            animation: slideIn 0.6s ease-out;
+        }
+
         .success-content {
             display: none;
         }
@@ -164,6 +169,11 @@
             position: relative;
             min-height: 200px;
             overflow: visible;
+            pointer-events: none;
+        }
+
+        .buttons button {
+            pointer-events: auto;
         }
 
         button {
@@ -177,13 +187,15 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             text-transform: uppercase;
             letter-spacing: 1px;
+            pointer-events: auto;
         }
 
         #yesBtn {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
             position: relative;
-            z-index: 3;
+            z-index: 10;
+            pointer-events: auto;
         }
 
         #yesBtn:hover {
@@ -250,6 +262,40 @@
             color: #2d3436;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+
+        .nav-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn.active {
+            background: #667eea;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -261,7 +307,27 @@
         <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-melody-547.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <button class="nav-btn active" id="navFeb8" onclick="showPage('feb8')">Feb 8 💍</button>
+        <button class="nav-btn" id="navFeb9" onclick="showPage('feb9')">Feb 9 🍫</button>
+    </div>
+
     <div class="container">
+        <!-- Wait Message (Feb 9+) -->
+        <div class="wait-content" id="waitContent" style="display: none;">
+            <div class="ring">🍫</div>
+            <h1>Hold On!</h1>
+            <div class="name">Logeshwari ❤️</div>
+            <div class="special-day">✨ February 9th - Chocolate Day ✨</div>
+            <div class="question">Wait Until Tomorrow! 💝</div>
+            <div class="success-text">
+                The next surprise is coming soon...<br>
+                Stay tuned! 😘
+            </div>
+            <div class="celebration">⏰💕🎁</div>
+        </div>
+
         <!-- Proposal Content -->
         <div class="proposal-content" id="proposalContent">
             <div class="ring">💍</div>
@@ -293,6 +359,48 @@
     </div>
 
     <script>
+        // Function to show specific page
+        function showPage(page) {
+            const proposalContent = document.getElementById('proposalContent');
+            const waitContent = document.getElementById('waitContent');
+            const successContent = document.getElementById('successContent');
+            const navFeb8 = document.getElementById('navFeb8');
+            const navFeb9 = document.getElementById('navFeb9');
+
+            if (page === 'feb8') {
+                proposalContent.style.display = 'block';
+                waitContent.style.display = 'none';
+                successContent.style.display = 'none';
+                navFeb8.classList.add('active');
+                navFeb9.classList.remove('active');
+            } else if (page === 'feb9') {
+                proposalContent.style.display = 'none';
+                waitContent.style.display = 'block';
+                successContent.style.display = 'none';
+                navFeb8.classList.remove('active');
+                navFeb9.classList.add('active');
+            }
+        }
+
+        // Check date and show appropriate content
+        function checkDate() {
+            const today = new Date();
+            const day = today.getDate();
+            const month = today.getMonth() + 1; // January is 0
+
+            // If it's February 9 or later, show wait message
+            if (month === 2 && day >= 9) {
+                showPage('feb9');
+            }
+            // Otherwise show proposal (February 8 or before)
+            else {
+                showPage('feb8');
+            }
+        }
+
+        // Check date on page load
+        checkDate();
+
         // Create floating hearts
         function createHeart() {
             const heart = document.createElement('div');
@@ -333,9 +441,20 @@
         const proposalContent = document.getElementById('proposalContent');
         const successContent = document.getElementById('successContent');
 
+        // Ensure YES button is always clickable
+        if (yesBtn) {
+            yesBtn.style.pointerEvents = 'auto';
+            yesBtn.style.zIndex = '100';
+        }
+
         // Yes button - show success message
-        yesBtn.addEventListener('click', function() {
-            proposalContent.classList.add('hidden');
+        yesBtn.addEventListener('click', function(e) {
+            console.log('YES button clicked!');
+            e.stopPropagation();
+            e.preventDefault();
+
+            proposalContent.style.display = 'none';
+            successContent.style.display = 'block';
             successContent.classList.add('show');
 
             // Create confetti effect
