@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chocolate Day 💝</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating chocolates background */
+        .chocolates {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .chocolate {
+            position: absolute;
+            font-size: 30px;
+            animation: float 8s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #8B4513;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .name {
+            color: #D2691E;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .special-day {
+            color: #ff6b9d;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            font-weight: 500;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .gift-box {
+            font-size: 120px;
+            margin: 30px 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .gift-box:hover {
+            transform: scale(1.1);
+        }
+
+        .gift-box.shake {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .message {
+            font-size: 1.2em;
+            color: #666;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .game-container {
+            display: none;
+            margin: 30px 0;
+        }
+
+        .game-container.active {
+            display: block;
+        }
+
+        .game-title {
+            font-size: 1.5em;
+            color: #8B4513;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #D2691E 0%, #8B4513 100%);
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+
+        .memory-card.flipped {
+            background: white;
+            border: 3px solid #D2691E;
+        }
+
+        .memory-card.matched {
+            background: #90EE90;
+            border: 3px solid #228B22;
+            cursor: default;
+        }
+
+        .memory-card .back {
+            display: block;
+        }
+
+        .memory-card .front {
+            display: none;
+        }
+
+        .memory-card.flipped .back {
+            display: none;
+        }
+
+        .memory-card.flipped .front {
+            display: block;
+        }
+
+        .game-stats {
+            margin: 20px 0;
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .image-reveal {
+            display: none;
+            margin: 30px 0;
+        }
+
+        .image-reveal.active {
+            display: block;
+            animation: celebrate 0.8s ease-out;
+        }
+
+        @keyframes celebrate {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .revealed-image {
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
+        }
+
+        .celebration {
+            font-size: 60px;
+            margin: 20px 0;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .love-note {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-style: italic;
+            color: #2d3436;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .reset-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 1em;
+            background: linear-gradient(135deg, #D2691E 0%, #8B4513 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #8B4513;
+            border: 2px solid #8B4513;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:hover {
+            background: #8B4513;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-btn.active {
+            background: #8B4513;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating chocolates background -->
+    <div class="chocolates" id="chocolates"></div>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" loop autoplay>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-melody-547.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <button class="nav-btn" id="navFeb8" onclick="window.location.href='index.html'">Feb 8 💍</button>
+        <button class="nav-btn active" id="navFeb9">Feb 9 🍫</button>
+        <button class="nav-btn" id="navFeb10" onclick="alert('Wait for Teddy Day tomorrow! 🧸💕')" style="opacity: 0.6; cursor: not-allowed;">Feb 10 🧸 🔒</button>
+    </div>
+
+    <div class="container">
+        <!-- Gift Box View -->
+        <div id="giftView">
+            <h1>Happy Chocolate Day! 🍫</h1>
+            <div class="name">Logeshwari ❤️</div>
+            <div class="special-day">✨ February 9th - Chocolate Day ✨</div>
+
+            <div class="gift-box" id="giftBox" onclick="startGame()">
+                🎁
+            </div>
+
+            <div class="message">
+                Uh brain power ah test panlaama🥱🥱!<br>
+                munjaaa indha game vilaadi win pannu paakulaaaa...!!!!🤧 
+            </div>
+        </div>
+
+        <!-- Memory Game -->
+        <div class="game-container" id="gameContainer">
+            <div class="game-title">🍫 Chocolate Memory Game 🍫</div>
+            <div class="message">Match all the chocolate pairs to unwrap your gift!</div>
+
+            <div class="game-stats">
+                <span>Moves: <strong id="moves">0</strong></span> |
+                <span>Matches: <strong id="matches">0</strong>/8</span>
+            </div>
+
+            <div class="memory-game" id="memoryGame"></div>
+        </div>
+
+        <!-- Image Reveal -->
+        <div class="image-reveal" id="imageReveal">
+            <div class="celebration">🎉🍫🎊</div>
+            <h2 style="color: #8B4513; margin-bottom: 20px;">You Won! 🎉</h2>
+
+            <!-- Replace this src with your actual image URL -->
+            <img src="chocky_feb09_2026.jpeg" alt="Special Gift" class="revealed-image" id="revealedImage">
+
+            <div class="love-note">
+                Sweet like chocolate, precious like you! 💝<br>
+                Happy Chocolate Day, my love! 🍫
+            </div>
+
+            <button class="reset-btn" onclick="location.reload()">Play Again 🎮</button>
+        </div>
+    </div>
+
+    <script>
+        // Create floating chocolates
+        function createChocolate() {
+            const chocolates = ['🍫', '🍬', '🍭', '🍩', '🧁'];
+            const chocolate = document.createElement('div');
+            chocolate.className = 'chocolate';
+            chocolate.textContent = chocolates[Math.floor(Math.random() * chocolates.length)];
+            chocolate.style.left = Math.random() * 100 + '%';
+            chocolate.style.animationDelay = Math.random() * 2 + 's';
+            chocolate.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            document.getElementById('chocolates').appendChild(chocolate);
+
+            setTimeout(() => chocolate.remove(), 10000);
+        }
+
+        // Create chocolates periodically
+        setInterval(createChocolate, 500);
+
+        // Background Music
+        const bgMusic = document.getElementById('bgMusic');
+        let hasStarted = false;
+        bgMusic.volume = 0.5;
+
+        document.addEventListener('click', function startMusic() {
+            if (!hasStarted) {
+                bgMusic.play().then(() => {
+                    hasStarted = true;
+                }).catch(() => {});
+            }
+        });
+
+        // Memory Game
+        const emojis = ['🍫', '🍬', '🍭', '🍩', '🧁', '🎂', '🍰', '🍪'];
+        let cards = [...emojis, ...emojis];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startGame() {
+            document.getElementById('giftBox').classList.add('shake');
+            setTimeout(() => {
+                document.getElementById('giftView').style.display = 'none';
+                document.getElementById('gameContainer').classList.add('active');
+                initGame();
+            }, 500);
+        }
+
+        function initGame() {
+            const gameBoard = document.getElementById('memoryGame');
+            gameBoard.innerHTML = '';
+            cards = shuffle(cards);
+
+            cards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.dataset.emoji = emoji;
+                card.dataset.index = index;
+                card.innerHTML = `
+                    <span class="back">🍫</span>
+                    <span class="front">${emoji}</span>
+                `;
+                card.onclick = () => flipCard(card);
+                gameBoard.appendChild(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (flippedCards.length >= 2 || card.classList.contains('flipped') || card.classList.contains('matched')) {
+                return;
+            }
+
+            card.classList.add('flipped');
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                moves++;
+                document.getElementById('moves').textContent = moves;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+
+            if (card1.dataset.emoji === card2.dataset.emoji) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                document.getElementById('matches').textContent = matchedPairs;
+                flippedCards = [];
+
+                if (matchedPairs === 8) {
+                    setTimeout(winGame, 500);
+                }
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+
+        function winGame() {
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('imageReveal').classList.add('active');
+
+            // Create confetti
+            for (let i = 0; i < 50; i++) {
+                setTimeout(createChocolate, i * 100);
+            }
+        }
+    </script>
+</body>
+</html>
